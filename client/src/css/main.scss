@@ -9,3 +9,12 @@
 body {
   font-family: system-ui;
 }
+
+/* Search form */
+.search-form {
+  display: flex;
+  position: relative;
+
+  &__input {}
+  &__submit {}
+}
