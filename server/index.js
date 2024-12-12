@@ -2,3 +2,16 @@
  * - Proxy API (connects to the recipe API and returns transformed data)
  * - Stores saved recipes in a fake db
  */
+
+const express = require("express");
+
+const PORT = 3000;
+const app = express();
+
+app.get("/", (req, res) => {
+  res.send("Hello World");
+});
+
+app.listen(PORT, () => {
+  console.log(`Listening on port: ${PORT}`);
+});
