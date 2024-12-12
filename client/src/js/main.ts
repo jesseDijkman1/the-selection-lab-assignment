@@ -4,3 +4,5 @@
  * - Save functionality
  * - Animations (3d)
  */
+
+import "./components/search-form";

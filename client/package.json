@@ -3,7 +3,15 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "scripts": {
+    "dev": "vite"
+  },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "sass-embedded": "^1.82.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3"
+  }
 }
