@@ -13,10 +13,13 @@ const app = express();
 
 app.get("/", async (req, res) => {
   try {
-    const json = await SpoonacularAPI.get("/recipes/random");
+    const json = await SpoonacularAPI.get("/recipes/complexSearch", {
+      query: "tomato",
+    });
 
     res.json(json);
   } catch (err) {
+    console.error(err);
     res.send(err);
   }
 });

@@ -7,9 +7,14 @@ class SpoonacularAPI {
     return headers;
   }
 
-  static async get(endpoint) {
+  static async get(endpoint, params = {}) {
     const url = new URL(endpoint, "https://api.spoonacular.com/");
     const headers = SpoonacularAPI.getDefaultHeaders();
+
+    // Set url search params
+    Object.entries(params).forEach((entry) => {
+      url.searchParams.set(...entry);
+    });
 
     const response = await fetch(url, { headers });
     const json = await response.json();
