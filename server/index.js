@@ -5,19 +5,15 @@
 require("dotenv").config();
 const express = require("express");
 
+// Libs
+const SpoonacularAPI = require("./lib/SpoonacularApi");
+
 const PORT = 3000;
 const app = express();
 
 app.get("/", async (req, res) => {
-  const headers = new Headers();
-  headers.append("x-api-key", process.env.API_KEY);
-  headers.append("Content-Type", "application/json");
-
   try {
-    const response = await fetch("https://api.spoonacular.com/recipes/random", {
-      headers,
-    });
-    const json = await response.json();
+    const json = await SpoonacularAPI.get("/recipes/random");
 
     res.json(json);
   } catch (err) {
