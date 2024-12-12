@@ -11,6 +11,11 @@ const SpoonacularAPI = require("./lib/SpoonacularApi");
 const PORT = 3000;
 const app = express();
 
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  next();
+});
+
 app.get("/", async (req, res) => {
   try {
     const json = await SpoonacularAPI.get("/recipes/complexSearch", {
@@ -21,6 +26,26 @@ app.get("/", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.send(err);
+  }
+});
+
+app.get("/search/autocomplete", async (req, res) => {
+  const { q } = req.query;
+
+  if (!q || q.trim().length === 0) {
+    return res.status(200).json({});
+  }
+
+  try {
+    const json = await SpoonacularAPI.get("/recipes/autocomplete", {
+      query: q,
+    });
+
+    console.log(json);
+
+    return res.status(200).json({ data: json, error: null });
+  } catch (err) {
+    return res.status(500).json({ data: null, error: err });
   }
 });
 
