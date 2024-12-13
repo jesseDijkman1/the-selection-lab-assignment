@@ -5,4 +5,4 @@
  * - Animations (3d)
  */
 
-import "./components/search-form";
+import.meta.glob("./components/*", { eager: true });
