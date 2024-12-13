@@ -51,3 +51,43 @@ export const show = (...nodes: HTMLElement[]) =>
     node.removeAttribute("aria-hidden");
     return node;
   });
+
+/**
+ * A hook that generates a function to create an HTML element from a template
+ * with dynamic content and attributes.
+ *
+ * @param template - An HTMLTemplateElement used as the base for generating elements.
+ * @returns A function that accepts a props object and generates a cloned HTML element
+ * with content and attributes populated from the template.
+ */
+export const useTemplate = (template: HTMLTemplateElement) => {
+  return (props: Record<string, string | number>) => {
+    const resolveTemplate = (element: Element) => {
+      for (let child of element.children) {
+        // Set the content of the element in the template
+        if (child.hasAttribute("data-template-content")) {
+          const propsKey = child.getAttribute("data-template-content")!;
+          child.textContent = props[propsKey] as string;
+          child.removeAttribute("data-template-content");
+        }
+
+        // Set the attributes on the current elements
+        if (child.hasAttribute("data-template-attributes")) {
+          const propsKeys = child
+            .getAttribute("data-template-attributes")!
+            .split(",");
+
+          for (let key of propsKeys) {
+            child.setAttribute(key, props[key] as string);
+          }
+        }
+
+        if (child.children) resolveTemplate(child);
+      }
+
+      return element;
+    };
+
+    return resolveTemplate(template.content.cloneNode(true) as Element); // Technically not correct as cloneNode(true) on content returns Node as the type. Could cause issues ...
+  };
+};
