@@ -33,15 +33,13 @@ app.get("/search/autocomplete", async (req, res) => {
   const { q } = req.query;
 
   if (!q || q.trim().length === 0) {
-    return res.status(200).json({});
+    return res.status(200).json({ data: [], error: null }); // Not sure about the status code
   }
 
   try {
     const json = await SpoonacularAPI.get("/recipes/autocomplete", {
       query: q,
     });
-
-    console.log(json);
 
     return res.status(200).json({ data: json, error: null });
   } catch (err) {

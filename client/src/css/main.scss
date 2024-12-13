@@ -10,11 +10,39 @@ body {
   font-family: system-ui;
 }
 
+[hidden] {
+  display: none !important;
+}
+
+// Utility classes
+
 /* Search form */
 .search-form {
   display: flex;
   position: relative;
+  width: fit-content;
 
-  &__input {}
-  &__submit {}
+  &__input {
+  }
+
+  &__submit {
+  }
+
+  &__autocomplete {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: blue;
+    width: 100%;
+
+    &-list {
+      background-color: green;
+
+      &-item {
+        background-color: red;
+      }
+    }
+  }
 }

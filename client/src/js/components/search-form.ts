@@ -1,12 +1,12 @@
-const eventListener = (
-  eventName: string,
-  element: HTMLElement | HTMLElement[],
-  fn: () => void
-) => {
-  const elements = Array.isArray(element) ? element : [element];
-  elements.forEach((el) => el.addEventListener(eventName, fn));
+import { eventListener, hide, show } from "../lib/utils";
 
-  return () => elements.forEach((el) => el.removeEventListener(eventName, fn));
+type AutocompleteResult = {
+  data: Array<{
+    id: number;
+    imageType: string;
+    title: string;
+  }>;
+  error: string;
 };
 
 window.customElements.define(
@@ -14,12 +14,47 @@ window.customElements.define(
   class SearchForm extends HTMLElement {
     eventListeners: (() => void)[] | undefined;
 
+    async autocomplete(query: string): Promise<AutocompleteResult["data"]> {
+      const response = await fetch(
+        `http://localhost:3000/search/autocomplete?q=${query}`
+      );
+      const { error, data }: AutocompleteResult = await response.json();
+
+      if (error !== null) throw error;
+
+      return data;
+    }
+
     connectedCallback() {
       const input = this.querySelector("input")!;
       const submit = this.querySelector("button")!;
+      const autocompleteList = this.querySelector("ul")!;
+      const autocompleteContainer = autocompleteList.parentElement!;
 
-      const handleInput = () => {
-        console.log("handle input");
+      const handleInput = async (e: Event) => {
+        const value = (e.target as HTMLInputElement).value.trim();
+
+        if (value.length === 0) {
+          hide(autocompleteContainer);
+          autocompleteList.innerHTML = "";
+          return;
+        }
+
+        try {
+          const autocompleteItems = await this.autocomplete(value);
+          const autocompleteListItems = autocompleteItems.map((item) => {
+            const li = document.createElement("li");
+            li.className = "search-form__autocomplete-list-item";
+            li.textContent = item.title;
+            return li;
+          });
+
+          show(autocompleteContainer);
+          autocompleteList.innerHTML = "";
+          autocompleteList.append(...autocompleteListItems);
+        } catch (err) {
+          console.error(err);
+        }
       };
 
       const handleSubmit = () => {
