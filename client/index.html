@@ -12,20 +12,30 @@
 <body>
   <h1>What can I cook?</h1>
 
-  <search-form class="search-form">
-    <input type="text" class="search-form__input">
-    <button type="submit" class="search-form__submit">Search</button>
+  <ingredients-selector class="ingredients-selector">
+    <input type="text" class="ingredients-selector__input">
 
-    <div class="search-form__autocomplete" hidden aria-hidden="true" aria-label="Autocomplete search">
-      <ul class="search-form__autocomplete-list">
-        <template>
-          <li class="search-form__autocomplete-list-item">
-            <button data-template-content='content'></button>
-          </li>
-        </template>
-      </ul>
+    <div class="ingredients-selector__autocomplete">
+      <ul class="ingredients-selector__autocomplete-list"></ul>
     </div>
-  </search-form>
+
+    <template>
+      <li class="ingredients-selector__autocomplete-list-item">
+        <button data-template-content='content'></button>
+      </li>
+    </template>
+  </ingredients-selector>
+
+  <ingredients-overview class="ingredients-overview">
+    <ul class="ingredients-overview__list">
+      <template>
+        <li class="ingredients-overview__list-item">
+          <span data-template-content="content"></span>
+          <button type="button" data-template-attributes="data-ingredient">x</button>
+        </li>
+      </template>
+    </ul>
+  </ingredients-overview>
 
   <script type="module" src="/src/js/main.ts"></script>
 </body>
