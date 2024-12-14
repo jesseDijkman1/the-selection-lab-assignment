@@ -79,7 +79,9 @@ export const replaceContent = (
 export const useTemplate = <T extends HTMLElement>(
   template: HTMLTemplateElement
 ) => {
-  return (props: Record<string, string | number>) => {
+  return (
+    props: Record<string, string | number | HTMLElement | HTMLElement[]>
+  ) => {
     const resolveTemplate = (element: Element) => {
       for (let child of element.children) {
         // Set the content of the element in the template
@@ -98,6 +100,16 @@ export const useTemplate = <T extends HTMLElement>(
           for (let key of propsKeys) {
             child.setAttribute(key, props[key] as string);
           }
+
+          child.removeAttribute("data-template-attributes");
+        }
+
+        if (child.hasAttribute("data-template-html")) {
+          const propsKey = child.getAttribute("data-template-html")!;
+          const html = props[propsKey] as HTMLElement | HTMLElement[];
+          child.append(...([] as HTMLElement[]).concat(html));
+
+          child.removeAttribute("data-template-html");
         }
 
         if (child.children) resolveTemplate(child);
