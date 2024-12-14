@@ -43,12 +43,16 @@
   </ingredients-form>
 
   <recipes-overview>
-
     <template>
       <article data-template-attributes="id">
         <img data-template-attributes="src,alt">
         <h4 data-template-content="title"></h4>
+        <div data-template-html='ingredients'></div>
       </article>
+    </template>
+
+    <template>
+      <span data-template-content="content" data-template-attributes="class"></span>
     </template>
   </recipes-overview>
 
