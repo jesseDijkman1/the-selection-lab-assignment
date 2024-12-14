@@ -34,7 +34,7 @@ class StateManager {
    * @param newState - Optional partial state to merge with the current state.
    * @param data - Additional data to pass to listeners.
    */
-  emit(eventName: string, newState: Partial<State> | null, data: any) {
+  emit(eventName: string, newState?: Partial<State> | null, data?: any) {
     if (!this.listeners[eventName]) return;
 
     if (newState) {
@@ -44,6 +44,14 @@ class StateManager {
     for (let fn of this.listeners[eventName]) {
       fn(this.state, data);
     }
+  }
+
+  /**
+   * Get a snapshot of the current state.
+   * @returns A shallow copy of the current state.
+   */
+  getState(): State {
+    return { ...this.state };
   }
 }
 
