@@ -53,6 +53,22 @@ export const show = (...nodes: HTMLElement[]) =>
   });
 
 /**
+ * Replaces the content of an HTML element
+ *
+ * @param {HTMLElement} node - The container element of which the content needs to be replaced.
+ * @param {HTMLElement | HTMLElement[]} content - The new content for the container
+ * @returns {HTMLElement} The container element
+ */
+export const replaceContent = (
+  node: HTMLElement,
+  content: HTMLElement | HTMLElement[]
+) => {
+  node.innerHTML = "";
+  node.append(...([] as HTMLElement[]).concat(content));
+  return node;
+};
+
+/**
  * A hook that generates a function to create an HTML element from a template
  * with dynamic content and attributes.
  *
@@ -60,7 +76,9 @@ export const show = (...nodes: HTMLElement[]) =>
  * @returns A function that accepts a props object and generates a cloned HTML element
  * with content and attributes populated from the template.
  */
-export const useTemplate = (template: HTMLTemplateElement) => {
+export const useTemplate = <T extends HTMLElement>(
+  template: HTMLTemplateElement
+) => {
   return (props: Record<string, string | number>) => {
     const resolveTemplate = (element: Element) => {
       for (let child of element.children) {
@@ -85,9 +103,9 @@ export const useTemplate = (template: HTMLTemplateElement) => {
         if (child.children) resolveTemplate(child);
       }
 
-      return element;
+      return element as T;
     };
 
-    return resolveTemplate(template.content.cloneNode(true) as Element); // Technically not correct as cloneNode(true) on content returns Node as the type. Could cause issues ...
+    return resolveTemplate(template.content.cloneNode(true) as T); // Technically not correct as cloneNode(true) on content returns Node as the type. Could cause issues ...
   };
 };

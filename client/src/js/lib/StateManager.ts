@@ -5,7 +5,8 @@ class StateManager<T extends Record<string, any>> {
   private listeners: Record<string, ListenerCallback<T>[]>;
 
   constructor(initialState: T) {
-    (this.state = initialState), (this.listeners = {});
+    this.state = { ...initialState };
+    this.listeners = {};
   }
 
   /**
@@ -32,7 +33,7 @@ class StateManager<T extends Record<string, any>> {
    * @param newState - Optional partial state to merge with the current state.
    * @param data - Additional data to pass to listeners.
    */
-  emit(eventName: string, newState?: Partial<T> | null, data?: any) {
+  emit(eventName: string, newState?: Record<string, any> | null, data?: any) {
     if (!this.listeners[eventName]) return;
 
     if (newState) {
@@ -55,6 +56,7 @@ class StateManager<T extends Record<string, any>> {
 
 const state = new StateManager({
   ingredients: [] as string[],
+  recipes: [] as any[],
 });
 
 export default state;
