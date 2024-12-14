@@ -12,30 +12,45 @@
 <body>
   <h1>What can I cook?</h1>
 
-  <ingredients-selector class="ingredients-selector">
-    <input type="text" class="ingredients-selector__input">
+  <ingredients-form class="ingredients-form">
+    <form action="">
+      <ingredients-selector class="ingredients-selector">
+        <input type="text" class="ingredients-selector__input">
 
-    <div class="ingredients-selector__autocomplete">
-      <ul class="ingredients-selector__autocomplete-list"></ul>
-    </div>
+        <div class="ingredients-selector__autocomplete">
+          <ul class="ingredients-selector__autocomplete-list"></ul>
+        </div>
+
+        <template>
+          <li class="ingredients-selector__autocomplete-list-item">
+            <button data-template-content='content'></button>
+          </li>
+        </template>
+      </ingredients-selector>
+
+      <ingredients-overview class="ingredients-overview">
+        <ul class="ingredients-overview__list">
+          <template>
+            <li class="ingredients-overview__list-item">
+              <span data-template-content="content"></span>
+              <button type="button" data-template-attributes="data-ingredient">x</button>
+            </li>
+          </template>
+        </ul>
+        <button type="submit">Find recipes</button>
+      </ingredients-overview>
+    </form>
+  </ingredients-form>
+
+  <recipes-overview>
 
     <template>
-      <li class="ingredients-selector__autocomplete-list-item">
-        <button data-template-content='content'></button>
-      </li>
+      <article data-template-attributes="id">
+        <img data-template-attributes="src,alt">
+        <h4 data-template-content="title"></h4>
+      </article>
     </template>
-  </ingredients-selector>
-
-  <ingredients-overview class="ingredients-overview">
-    <ul class="ingredients-overview__list">
-      <template>
-        <li class="ingredients-overview__list-item">
-          <span data-template-content="content"></span>
-          <button type="button" data-template-attributes="data-ingredient">x</button>
-        </li>
-      </template>
-    </ul>
-  </ingredients-overview>
+  </recipes-overview>
 
   <script type="module" src="/src/js/main.ts"></script>
 </body>
