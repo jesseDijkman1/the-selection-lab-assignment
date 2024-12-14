@@ -1,13 +1,11 @@
-type State = Record<string, any>;
-type ListenerCallback = (state: State, data: any) => void;
+type ListenerCallback<T> = (state: T, data: any) => void;
 
-class StateManager {
-  private state: State;
-  private listeners: Record<string, ListenerCallback[]>;
+class StateManager<T extends Record<string, any>> {
+  private state: T;
+  private listeners: Record<string, ListenerCallback<T>[]>;
 
-  constructor() {
-    this.state = {};
-    this.listeners = {};
+  constructor(initialState: T) {
+    (this.state = initialState), (this.listeners = {});
   }
 
   /**
@@ -16,7 +14,7 @@ class StateManager {
    * @param cb - The callback function to execute when the event is emitted.
    * @returns A function to unsubscribe the listener.
    */
-  on(eventName: string, cb: ListenerCallback) {
+  on(eventName: string, cb: ListenerCallback<T>) {
     if (!this.listeners[eventName]) this.listeners[eventName] = [];
 
     this.listeners[eventName].push(cb);
@@ -34,7 +32,7 @@ class StateManager {
    * @param newState - Optional partial state to merge with the current state.
    * @param data - Additional data to pass to listeners.
    */
-  emit(eventName: string, newState?: Partial<State> | null, data?: any) {
+  emit(eventName: string, newState?: Partial<T> | null, data?: any) {
     if (!this.listeners[eventName]) return;
 
     if (newState) {
@@ -50,11 +48,13 @@ class StateManager {
    * Get a snapshot of the current state.
    * @returns A shallow copy of the current state.
    */
-  getState(): State {
+  getState(): T {
     return { ...this.state };
   }
 }
 
-const state = new StateManager();
+const state = new StateManager({
+  ingredients: [] as string[],
+});
 
 export default state;
