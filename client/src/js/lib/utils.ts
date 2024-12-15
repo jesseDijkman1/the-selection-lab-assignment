@@ -123,3 +123,24 @@ export const useTemplate = <T extends HTMLElement>(
     return resolveTemplate(template.content.cloneNode(true) as T); // Technically not correct as cloneNode(true) on content returns Node as the type. Could cause issues ...
   };
 };
+
+export const debounce = (fn: (...args: any[]) => void, delay: number) => {
+  let timeout: number | null = null;
+
+  return (...args: any[]) => {
+    if (timeout !== null) clearTimeout(timeout);
+
+    timeout = setTimeout(() => fn(...args), delay);
+  };
+};
+
+export const onClickOutside = (container: HTMLElement, cb: () => void) => {
+  return eventListener(
+    "click",
+    document.documentElement,
+    (e: Event) => {
+      if (!container.contains(e.target as HTMLElement)) cb();
+    },
+    { capture: true }
+  );
+};
