@@ -9,13 +9,15 @@
 export const eventListener = (
   eventName: string,
   element: HTMLElement | HTMLElement[],
-  fn: (e: Event) => void
+  fn: (e: Event) => void,
+  options: EventListenerOptions | boolean = {}
 ): (() => void) => {
   const elements = Array.isArray(element) ? element : [element];
 
-  elements.forEach((el) => el.addEventListener(eventName, fn));
+  elements.forEach((el) => el.addEventListener(eventName, fn, options));
 
-  return () => elements.forEach((el) => el.removeEventListener(eventName, fn));
+  return () =>
+    elements.forEach((el) => el.removeEventListener(eventName, fn, options));
 };
 
 /**
