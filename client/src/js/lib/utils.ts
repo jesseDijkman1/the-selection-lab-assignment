@@ -144,3 +144,76 @@ export const onClickOutside = (container: HTMLElement, cb: () => void) => {
     { capture: true }
   );
 };
+
+export const onFocusLost = (container: HTMLElement, cb: () => void) => {
+  let hasFocus = false;
+  const triggeredEvents: Set<string> = new Set();
+
+  const check = debounce(() => {
+    if (
+      triggeredEvents.has("focus-inside") ||
+      triggeredEvents.has("clicked-inside")
+    ) {
+      hasFocus = true;
+    }
+
+    if (
+      hasFocus &&
+      (triggeredEvents.has("focus-outside") ||
+        triggeredEvents.has("clicked-outside") ||
+        (triggeredEvents.size === 1 && triggeredEvents.has("blur")))
+    ) {
+      hasFocus = false;
+      cb();
+    }
+
+    triggeredEvents.clear();
+  }, 0);
+
+  const removeFocusListener = eventListener(
+    "focus",
+    document.documentElement,
+    (e: Event) => {
+      triggeredEvents.add(
+        container.contains(e.target as HTMLElement)
+          ? "focus-inside"
+          : "focus-outside"
+      );
+
+      check();
+    },
+    true
+  );
+
+  const removeBlurListener = eventListener(
+    "blur",
+    document.documentElement,
+    () => {
+      triggeredEvents.add("blur");
+
+      check();
+    },
+    true
+  );
+
+  const removeClickListener = eventListener(
+    "mousedown",
+    document.documentElement,
+    (e) => {
+      triggeredEvents.add(
+        container.contains(e.target as HTMLElement)
+          ? "clicked-inside"
+          : "clicked-outside"
+      );
+
+      check();
+    },
+    true
+  );
+
+  return () => {
+    removeFocusListener();
+    removeBlurListener();
+    removeClickListener();
+  };
+};
