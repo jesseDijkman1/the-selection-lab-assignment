@@ -1,4 +1,12 @@
-import { eventListener, hide, show, useTemplate } from "../lib/utils";
+import {
+  eventListener,
+  hide,
+  show,
+  replaceContent,
+  useTemplate,
+  onFocusLost,
+  repaint,
+} from "../lib/utils";
 import state from "../lib/StateManager";
 import Autocomplete from "../lib/Autocomplete";
 
@@ -13,7 +21,7 @@ window.customElements.define(
       const autocompleteContainer = autocompleteList.parentElement!;
       const template = this.querySelector("template")!;
 
-      const createAutocompleteListItem = useTemplate(template);
+      const createIngredientButton = useTemplate<HTMLLIElement>(template);
 
       const ingredientsAutocomplete = new Autocomplete("ingredients", {});
 
@@ -22,66 +30,91 @@ window.customElements.define(
         name: string;
         image: string;
       }> = [];
+      let dropdownIsOpen = false;
+
+      const openDropdown = () => {
+        if (dropdownIsOpen) return;
+        dropdownIsOpen = true;
+        show(autocompleteContainer);
+        repaint(autocompleteContainer);
+        autocompleteContainer.classList.add(
+          "ingredients-selector__dropdown--open"
+        );
+      };
+
+      const closeDropdown = () => {
+        if (!dropdownIsOpen) return;
+        dropdownIsOpen = false;
+
+        this.addEventListener(
+          "transitionend",
+          () => {
+            hide(autocompleteContainer);
+          },
+          {
+            once: true,
+          }
+        );
+
+        autocompleteContainer.classList.remove(
+          "ingredients-selector__dropdown--open"
+        );
+      };
 
       const updateSelector = () => {
-        if (selectorItems.length === 0) {
-          return hide(autocompleteContainer);
-        }
-
         const autocompleteListItems = selectorItems.map((item) =>
-          createAutocompleteListItem({ content: item.name })
+          createIngredientButton({
+            ingredient: item.name,
+            "data-ingredient": item.name,
+          })
         );
-        show(autocompleteContainer);
-        autocompleteList.innerHTML = "";
-        autocompleteList.append(...autocompleteListItems);
+        replaceContent(autocompleteList, autocompleteListItems);
       };
 
       const handleInput = async (e: Event) => {
         const inputValue = (e.target as HTMLInputElement).value.trim();
+
+        if (inputValue === "") {
+          closeDropdown();
+          return;
+        }
 
         try {
           selectorItems =
             inputValue.length === 0
               ? []
               : await ingredientsAutocomplete.query(inputValue);
+
+          if (selectorItems.length === 0) {
+            this.classList.add("ingredients-selector--no-results");
+          } else {
+            this.classList.remove("ingredients-selector--no-results");
+          }
           updateSelector();
+          openDropdown();
         } catch (err) {
           console.error(err);
         }
       };
 
-      const handleAutocompleteClick = (e: Event) => {
-        if (!e.target) return;
-
-        const button = (e.target as HTMLElement).closest("button");
-
-        if (button) {
-          const currentState = state.getState();
-          state.emit("ingredients:update", {
-            ingredients: [
-              ...(currentState.ingredients ?? []),
-              button.textContent,
-            ],
-          });
-        }
-      };
-
-      const handleIngredientsUpdate: Parameters<typeof state.on>[1] = (
-        state
-      ) => {
-        const selectedIngredients = state.ingredients;
-
-        selectorItems = selectorItems.filter(
-          ({ name }) => !selectedIngredients.includes(name)
-        );
-        updateSelector();
-      };
-
       this.eventListeners = [
-        state.on("ingredients:update", handleIngredientsUpdate),
         eventListener("input", input, handleInput),
-        eventListener("click", autocompleteList, handleAutocompleteClick),
+        eventListener(
+          "focus",
+          this,
+          () => {
+            if (input.value.length > 0) openDropdown();
+          },
+          true
+        ),
+        onFocusLost(this, () => closeDropdown()),
       ];
+    }
+
+    disconnectedCallback() {
+      if (this.eventListeners) {
+        for (let removeListener of this.eventListeners) removeListener();
+      }
     }
   }
 );

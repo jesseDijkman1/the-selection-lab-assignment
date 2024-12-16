@@ -1,0 +1,75 @@
+@use "./../utils.scss" as utils;
+
+.ingredients-selector {
+  $root: &;
+
+  position: relative;
+  z-index: 1;
+
+  &__input {
+    width: 100%;
+    position: relative;
+
+    &:focus {
+      outline: solid 1px black;
+    }
+  }
+
+  &__dropdown {
+    position: absolute;
+    width: 100%;
+    top: 100%;
+    padding-top: 16px;
+    margin-top: -16px;
+    overflow: hidden;
+    z-index: -1;
+
+    @at-root #{&}--open &-list {
+      transform: translateY(0);
+    }
+
+    &-list {
+      transform: translateY(-100%);
+      transition: transform 0.3s ease;
+      padding: 1rem;
+      padding-top: 2rem;
+      margin-top: -1rem;
+      background-color: white;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: auto;
+      border-radius: 0 0 1rem 1rem;
+
+      &::before {
+        content: "";
+        display: block;
+        position: absolute;
+        width: 100%;
+        border-bottom: solid 1px black;
+        top: 1rem;
+        left: 0;
+      }
+
+      @at-root #{$root}__input:focus + #{$root}__dropdown &::before {
+        opacity: 0;
+      }
+
+      &-item {
+        width: auto;
+        display: flex;
+      }
+    }
+
+    &-message {
+      display: none;
+
+      @at-root #{$root}--no-results & {
+        display: inline;
+      }
+    }
+  }
+}
