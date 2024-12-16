@@ -1,8 +1,11 @@
 import { eventListener, useTemplate } from "../lib/utils";
 import state, { StateManager } from "../lib/StateManager";
+import BEM from "../lib/BEM";
+
+const [COMPONENT_NAME, BEM_EMPTY] = new BEM("ingredients-overview").RAW.EMPTY;
 
 window.customElements.define(
-  "ingredients-overview",
+  COMPONENT_NAME,
   class IngredientsOverview extends HTMLElement {
     eventListeners: (() => void)[] | undefined;
 
@@ -14,11 +17,7 @@ window.customElements.define(
 
       // Parameters are not typed
       const handleIngredientsUpdate = (state: StateManager.StateObject) => {
-        if (state.ingredients.length > 0) {
-          this.classList.remove("ingredients-overview--empty");
-        } else {
-          this.classList.add("ingredients-overview--empty");
-        }
+        this.classList.toggle(BEM_EMPTY, state.ingredients.length === 0);
 
         const listItems = state.ingredients.map((ingredient: string) =>
           createListItem({ ingredient, "data-ingredient": ingredient })

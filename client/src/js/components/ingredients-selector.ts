@@ -8,9 +8,14 @@ import {
   repaint,
 } from "../lib/utils";
 import IngredientAPI, { IngredientsAPITypes } from "../lib/IngredientsAPI";
+import BEM from "../lib/BEM";
+
+const [COMPONENT_NAME, BEM_OPEN, BEM_NO_RESULTS] = new BEM(
+  "ingredients-selector"
+).RAW.OPEN.NO_RESULTS;
 
 window.customElements.define(
-  "ingredients-selector",
+  COMPONENT_NAME,
   class IngredientsSelector extends HTMLElement {
     eventListeners: (() => void)[] | undefined;
 
@@ -31,9 +36,7 @@ window.customElements.define(
         dropdownIsOpen = true;
         show(autocompleteContainer);
         repaint(autocompleteContainer);
-        autocompleteContainer.classList.add(
-          "ingredients-selector__dropdown--open"
-        );
+        autocompleteContainer.classList.add(BEM_OPEN);
       };
 
       const closeDropdown = () => {
@@ -50,9 +53,7 @@ window.customElements.define(
           }
         );
 
-        autocompleteContainer.classList.remove(
-          "ingredients-selector__dropdown--open"
-        );
+        autocompleteContainer.classList.remove(BEM_OPEN);
       };
 
       const updateSelector = () => {
@@ -79,11 +80,8 @@ window.customElements.define(
               ? []
               : await IngredientAPI.fetch("search", { q: inputValue });
 
-          if (selectorItems.length === 0) {
-            this.classList.add("ingredients-selector--no-results");
-          } else {
-            this.classList.remove("ingredients-selector--no-results");
-          }
+          this.classList.toggle(BEM_NO_RESULTS, selectorItems.length === 0);
+
           updateSelector();
           openDropdown();
         } catch (err) {

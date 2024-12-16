@@ -1,9 +1,12 @@
 import { eventListener, onClickOutside, useTemplate } from "../lib/utils";
 import state from "../lib/StateManager";
 import RecipesAPI from "../lib/RecipesAPI";
+import BEM from "../lib/BEM";
+
+const [COMPONENT_NAME, BEM_OPEN] = new BEM("recipe-modal").RAW.OPEN;
 
 window.customElements.define(
-  "recipe-modal",
+  COMPONENT_NAME,
   class RecipeModal extends HTMLElement {
     eventListeners: (() => void)[] | undefined;
 
@@ -38,11 +41,11 @@ window.customElements.define(
       this.eventListeners = [
         state.on("modal:open", async (state) => {
           showLoader();
-          this.classList.add("recipe-modal--open");
+          this.classList.add(BEM_OPEN);
           await loadModalContent(state.openModal!);
         }),
-        state.on("modal:close", (state) => {
-          this.classList.remove("recipe-modal--open");
+        state.on("modal:close", () => {
+          this.classList.remove(BEM_OPEN);
         }),
         onClickOutside(body, () => {
           state.emit("modal:close", { openModal: null });
