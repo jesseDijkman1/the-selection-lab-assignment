@@ -1,0 +1,19 @@
+.ingredients-overview {
+  display: flex;
+  flex-direction: column;
+  transition: opacity 0.3s ease;
+
+  &--empty {
+    opacity: 0;
+  }
+
+  &__title {
+  }
+
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+}

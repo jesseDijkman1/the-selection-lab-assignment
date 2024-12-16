@@ -1,0 +1,53 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Mako, system-ui;
+  background: linear-gradient(
+      296.82deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(249, 172, 58, 0.8) 100%
+    ),
+    linear-gradient(
+      243.18deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(8, 130, 199, 0.5) 100%
+    ),
+    #ffffff;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+ul {
+  list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: Lexend;
+}
+
+h1 {
+  font-size: 44px;
+}
+
+h2 {
+  font-size: 28px;
+}
+
+h3 {
+  font-size: 22px;
+}
+
+[hidden] {
+  display: none !important;
+}

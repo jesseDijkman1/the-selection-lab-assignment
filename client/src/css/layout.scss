@@ -1,0 +1,56 @@
+@use "./utils.scss" as utils;
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-auto-rows: auto;
+  margin-top: 40px;
+  padding: 0 1rem;
+  column-gap: 40px;
+
+  @media screen and (min-width: 800px) {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-areas:
+      "title title title aside"
+      "form form . aside"
+      "overview overview overview aside";
+    margin-top: 30vh;
+    padding: 0 max(2rem, calc((100vw - 1280px) / 2));
+  }
+
+  &__title {
+    @media screen and (min-width: 800px) {
+      grid-area: title;
+      font-size: utils.clampDesktopVW(64);
+    }
+  }
+
+  &__form {
+    margin-top: 40px;
+
+    @media screen and (min-width: 800px) {
+      grid-area: form;
+    }
+  }
+
+  &__overview {
+    margin-top: 2.5rem;
+
+    @media screen and (min-width: 800px) {
+      grid-area: overview;
+    }
+  }
+
+  &__aside {
+    background-color: #ffffff;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    position: sticky;
+    top: 40px;
+    align-self: flex-start;
+
+    @media screen and (min-width: 800px) {
+      grid-area: aside;
+    }
+  }
+}

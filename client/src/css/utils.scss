@@ -1,0 +1,19 @@
+@function rem($px) {
+  @return #{calc($px / 16)}rem;
+}
+
+@function mobileVW($px) {
+  @return calc($px / 475 * 100vw);
+}
+
+@function clampMobileVW($px) {
+  @return clamp(rem($px * 0.75), #{mobileVW($px)}, rem($px * 1.25));
+}
+
+@function desktopVW($px) {
+  @return calc($px / 1440 * 100vw);
+}
+
+@function clampDesktopVW($px) {
+  @return clamp(rem($px * 0.75), #{desktopVW($px)}, rem($px * 1.25));
+}

@@ -1,0 +1,19 @@
+.input {
+  display: flex;
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  font-family: Lexend;
+  border: none;
+  font-size: 1.125rem;
+
+  &::placeholder {
+    color: #a3a3a3;
+    opacity: 1;
+    font-weight: 300;
+  }
+
+  &::-ms-input-placeholder {
+    color: #a3a3a3;
+    font-weight: 300;
+  }
+}

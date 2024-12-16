@@ -11,6 +11,11 @@ const SpoonacularAPI = require("./lib/SpoonacularApi");
 const PORT = 3000;
 const app = express();
 
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  next();
+});
+
 app.get("/", async (req, res) => {
   try {
     const json = await SpoonacularAPI.get("/recipes/complexSearch", {
@@ -21,6 +26,90 @@ app.get("/", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.send(err);
+  }
+});
+
+app.get("/recipes/autocomplete", async (req, res) => {
+  const { q } = req.query;
+
+  if (!q || q.trim().length === 0) {
+    return res.status(200).json({ data: [], error: null }); // Not sure about the status code
+  }
+
+  try {
+    const json = await SpoonacularAPI.get("/recipes/autocomplete", {
+      query: q,
+    });
+
+    return res.status(200).json({ data: json, error: null });
+  } catch (err) {
+    return res.status(500).json({ data: null, error: err });
+  }
+});
+
+app.get("/ingredients/autocomplete", async (req, res) => {
+  const { q } = req.query;
+
+  if (!q || q.trim().length === 0) {
+    return res.status(200).json({ data: [], error: null }); // Not sure about the status code
+  }
+
+  try {
+    const json = await SpoonacularAPI.get("/food/ingredients/autocomplete", {
+      query: q,
+    });
+
+    return res.status(200).json({ data: json, error: null });
+  } catch (err) {
+    return res.status(500).json({ data: null, error: err });
+  }
+});
+
+app.get("/recipes/search", async (req, res) => {
+  const { ingredients } = req.query;
+
+  // TODO: Fix status code
+  if (!ingredients || ingredients.trim().length === 0) {
+    return res.status(200).json({ data: [], error: null }); // Not sure about the status code
+  }
+
+  try {
+    const json = await SpoonacularAPI.get("/recipes/findByIngredients", {
+      ingredients,
+    });
+
+    // Reduce and transform some of the data
+    const data = json.map((recipe) => {
+      const usedIngredients = recipe.usedIngredients.map((ingredient) => ({
+        ...ingredient,
+        missing: false,
+      }));
+
+      const missingIngredients = recipe.missedIngredients.map((ingredient) => ({
+        ...ingredient,
+        missing: true,
+      }));
+
+      return {
+        ...recipe,
+        ingredients: [...usedIngredients, ...missingIngredients],
+      };
+    });
+
+    return res.status(200).json({ data, error: null });
+  } catch (err) {
+    return res.status(500).json({ data: null, error: err });
+  }
+});
+
+app.get("/recipes/:id", async (req, res) => {
+  try {
+    const json = await SpoonacularAPI.get(
+      `/recipes/${req.params.id}/information`
+    );
+    return res.status(200).json({ data: json, error: null });
+  } catch (err) {
+    return res.status(500).json({ data: null, error: err });
   }
 });
 

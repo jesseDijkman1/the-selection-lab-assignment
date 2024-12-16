@@ -16,10 +16,14 @@ class SpoonacularAPI {
       url.searchParams.set(...entry);
     });
 
-    const response = await fetch(url, { headers });
-    const json = await response.json();
+    try {
+      const response = await fetch(url, { headers });
+      const json = await response.json();
 
-    return json;
+      return json;
+    } catch (err) {
+      throw err;
+    }
   }
 }
 
