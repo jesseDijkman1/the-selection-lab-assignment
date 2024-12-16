@@ -1,3 +1,5 @@
+import { RecipesAPITypes } from "./RecipesAPI";
+
 type ListenerCallback<T> = (state: T, data: any) => void;
 
 class StateManager<T extends Record<string, any>> {
@@ -56,7 +58,7 @@ class StateManager<T extends Record<string, any>> {
 
 const state = new StateManager({
   ingredients: [] as string[],
-  recipes: [] as any[],
+  recipes: [] as RecipesAPITypes.RecipeObject[],
   openModal: null as null | string,
 });
 
