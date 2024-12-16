@@ -108,8 +108,13 @@ export const useTemplate = <T extends HTMLElement>(
 
         if (child.hasAttribute("data-template-html")) {
           const propsKey = child.getAttribute("data-template-html")!;
-          const html = props[propsKey] as HTMLElement | HTMLElement[];
-          child.append(...([] as HTMLElement[]).concat(html));
+          const html = props[propsKey] as HTMLElement | HTMLElement[] | string;
+
+          if (typeof html === "string") {
+            child.innerHTML = html;
+          } else {
+            child.append(...([] as HTMLElement[]).concat(html));
+          }
 
           child.removeAttribute("data-template-html");
         }
