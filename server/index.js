@@ -81,28 +81,34 @@ app.get("/recipes/search", async (req, res) => {
     // Reduce and transform some of the data
     const data = json.map((recipe) => {
       const usedIngredients = recipe.usedIngredients.map((ingredient) => ({
-        id: ingredient.id,
-        name: ingredient.name,
+        ...ingredient,
         missing: false,
       }));
 
       const missingIngredients = recipe.missedIngredients.map((ingredient) => ({
-        id: ingredient.id,
-        name: ingredient.name,
+        ...ingredient,
         missing: true,
       }));
 
       return {
-        id: recipe.id,
-        title: recipe.title,
-        image: recipe.image,
+        ...recipe,
         ingredients: [...usedIngredients, ...missingIngredients],
       };
     });
 
     return res.status(200).json({ data, error: null });
   } catch (err) {
-    console.log(err);
+    return res.status(500).json({ data: null, error: err });
+  }
+});
+
+app.get("/recipes/:id", async (req, res) => {
+  try {
+    const json = await SpoonacularAPI.get(
+      `/recipes/${req.params.id}/information`
+    );
+    return res.status(200).json({ data: json, error: null });
+  } catch (err) {
     return res.status(500).json({ data: null, error: err });
   }
 });
