@@ -10,51 +10,124 @@
 </head>
 
 <body>
-  <h1>What can I cook?</h1>
+  <recipe-modal class="recipe-modal">
+    <div class="recipe-modal__overlay"></div>
+    <div class='recipe-modal__body'></div>
 
-  <ingredients-form class="ingredients-form">
-    <form action="">
-      <ingredients-selector class="ingredients-selector">
-        <input type="text" class="ingredients-selector__input">
+    <template>
+      <header class="recipe-modal__header">
+        <h2 class="recipe-modal__title" data-template-content="title"></h2>
 
-        <div class="ingredients-selector__autocomplete">
-          <ul class="ingredients-selector__autocomplete-list"></ul>
+        <div class="recipe-modal__image-container">
+          <img data-template-attributes="src,alt">
         </div>
+      </header>
 
-        <template>
-          <li class="ingredients-selector__autocomplete-list-item">
-            <button data-template-content='content'></button>
-          </li>
-        </template>
-      </ingredients-selector>
+      <div class="recipe-modal__content-container">
+        <p data-template-html='description'></p>
+        <hr>
+        <div data-template-html="instructions"></div>
+      </div>
+    </template>
+  </recipe-modal>
 
-      <ingredients-overview class="ingredients-overview">
-        <ul class="ingredients-overview__list">
+  <main class="layout">
+    <h1 class="layout__title">What do you have in your fridge?</h1>
+
+    <ingredients-form class="ingredients-form layout__form">
+      <form action="">
+        <ingredients-selector class="ingredients-selector">
+          <input type="text" class="ingredients-selector__input input" placeholder="Search ingredients ...">
+
+          <div class="ingredients-selector__dropdown" hidden aria-hidden="true">
+            <ul class="ingredients-selector__dropdown-list"></ul>
+
+            <p class="ingredients-selector__dropdown-message">
+              No ingredients found
+            </p>
+          </div>
+
           <template>
-            <li class="ingredients-overview__list-item">
-              <span data-template-content="content"></span>
-              <button type="button" data-template-attributes="data-ingredient">x</button>
+            <li class="ingredients-selector__dropdown-list-item">
+              <ingredient-button class="ingredient-button" data-template-attributes="data-ingredient">
+                <button type="button" class="ingredient-button__button">
+                  <span data-template-content="ingredient" class="ingredient-button__text"></span>
+                  <svg class="ingredient-button__icon" width="100" height="100" viewBox="0 0 100 100" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path fill="currentColor" />
+                  </svg>
+                </button>
+              </ingredient-button>
             </li>
           </template>
-        </ul>
-        <button type="submit">Find recipes</button>
-      </ingredients-overview>
-    </form>
-  </ingredients-form>
+        </ingredients-selector>
 
-  <recipes-overview>
-    <template>
-      <article data-template-attributes="id">
-        <img data-template-attributes="src,alt">
-        <h4 data-template-content="title"></h4>
-        <div data-template-html='ingredients'></div>
-      </article>
-    </template>
+        <button class="ingredients-form__submit button" type="submit" disabled>Find recipes</button>
+      </form>
+    </ingredients-form>
 
-    <template>
-      <span data-template-content="content" data-template-attributes="class"></span>
-    </template>
-  </recipes-overview>
+    <ingredients-overview class="ingredients-overview ingredients-overview--empty layout__aside" role="complementary">
+      <h2>My ingredients</h2>
+      <ul class="ingredients-overview__list">
+      </ul>
+
+      <template>
+        <li class="ingredients-overview__list-item">
+          <ingredient-button class="ingredient-button ingredient-button--active"
+            data-template-attributes="data-ingredient">
+            <button type="button" class="ingredient-button__button">
+              <span data-template-content="ingredient" class="ingredient-button__text"></span>
+              <svg class="ingredient-button__icon" width="100" height="100" viewBox="0 0 100 100" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill="currentColor" />
+              </svg>
+            </button>
+          </ingredient-button>
+        </li>
+      </template>
+    </ingredients-overview>
+
+
+    <recipes-overview class="layout__overview recipes-overview section" hidden role="region">
+      <h2 class="recipes-overview__title">Recipes</h2>
+      <ul class="recipes-overview__list"></ul>
+
+      <template>
+        <li class="recipes-overview__list-item">
+
+          <article data-template-attributes="id" class="recipe-item block block--horizontal">
+            <modal-toggle class="recipe-item__modal-toggle" data-template-attributes="data-modal-id">
+              <button type="button">See details</button>
+            </modal-toggle>
+
+            <div class="recipe-item__image-container">
+              <img data-template-attributes="src,alt">
+            </div>
+
+            <div class="recipe-item__content-container">
+              <h3 data-template-content="title" class="recipe-item__title"></h3>
+              <ul data-template-html='ingredients' class="recipe-item__ingredients-list"></ul>
+            </div>
+          </article>
+        </li>
+      </template>
+
+      <template>
+        <li class="recipe-item__ingredients-list-item">
+          <ingredient-button data-template-attributes="data-ingredient,class">
+            <button type="button" class="ingredient-button__button">
+              <span data-template-content="ingredient" class="ingredient-button__text"></span>
+              <svg class="ingredient-button__icon" width="100" height="100" viewBox="0 0 100 100" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill="currentColor" />
+              </svg>
+            </button>
+          </ingredient-button>
+        </li>
+      </template>
+    </recipes-overview>
+
+  </main>
 
   <script type="module" src="/src/js/main.ts"></script>
 </body>
