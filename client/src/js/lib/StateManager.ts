@@ -57,6 +57,7 @@ class StateManager<T extends Record<string, any>> {
 const state = new StateManager({
   ingredients: [] as string[],
   recipes: [] as any[],
+  openModal: null as null | string,
 });
 
 export default state;
