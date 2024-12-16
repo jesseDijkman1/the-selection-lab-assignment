@@ -1,18 +1,22 @@
 import { eventListener } from "../lib/utils";
-import state from "../lib/StateManager";
+import state, { StateManager } from "../lib/StateManager";
+import BEM from "../lib/BEM";
+
+const [COMPONENT_NAME, BEM_STATIC, BEM_ACTIVE] = new BEM("ingredient-button")
+  .RAW.STATIC.ACTIVE;
 
 window.customElements.define(
-  "ingredient-button",
+  COMPONENT_NAME,
   class IngredientsButton extends HTMLElement {
     eventListeners: (() => void)[] | undefined;
 
     connectedCallback() {
-      if (this.classList.contains("ingredient-button--static")) return;
+      if (this.classList.contains(BEM_STATIC)) return;
 
       const button = this.querySelector("button")!;
       const thisIngredient = this.getAttribute("data-ingredient")!;
 
-      const handleClick = (e: Event) => {
+      const handleClick = () => {
         const currentState = state.getState();
         const ingredientIsAdded =
           currentState.ingredients.includes(thisIngredient);
@@ -26,14 +30,11 @@ window.customElements.define(
         });
       };
 
-      const handleIngredientUpdate: Parameters<typeof state.on>[1] = (
-        state
-      ) => {
-        if (state.ingredients.includes(thisIngredient)) {
-          this.classList.add("ingredient-button--active");
-        } else {
-          this.classList.remove("ingredient-button--active");
-        }
+      const handleIngredientUpdate = (state: StateManager.StateObject) => {
+        this.classList.toggle(
+          BEM_ACTIVE,
+          state.ingredients.includes(thisIngredient)
+        );
       };
 
       this.eventListeners = [
@@ -42,6 +43,8 @@ window.customElements.define(
       ];
     }
 
-    disconnectedCallback() {}
+    disconnectedCallback() {
+      for (let removeListener of this.eventListeners ?? []) removeListener();
+    }
   }
 );

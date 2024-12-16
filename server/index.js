@@ -16,38 +16,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/", async (req, res) => {
-  try {
-    const json = await SpoonacularAPI.get("/recipes/complexSearch", {
-      query: "tomato",
-    });
-
-    res.json(json);
-  } catch (err) {
-    console.error(err);
-    res.send(err);
-  }
-});
-
-app.get("/recipes/autocomplete", async (req, res) => {
-  const { q } = req.query;
-
-  if (!q || q.trim().length === 0) {
-    return res.status(200).json({ data: [], error: null }); // Not sure about the status code
-  }
-
-  try {
-    const json = await SpoonacularAPI.get("/recipes/autocomplete", {
-      query: q,
-    });
-
-    return res.status(200).json({ data: json, error: null });
-  } catch (err) {
-    return res.status(500).json({ data: null, error: err });
-  }
-});
-
-app.get("/ingredients/autocomplete", async (req, res) => {
+app.get("/ingredients/search", async (req, res) => {
   const { q } = req.query;
 
   if (!q || q.trim().length === 0) {
@@ -102,11 +71,17 @@ app.get("/recipes/search", async (req, res) => {
   }
 });
 
-app.get("/recipes/:id", async (req, res) => {
+app.get("/recipes/details", async (req, res) => {
+  const { id } = req.query;
+
+  if (!id) {
+    return res
+      .status(500)
+      .json({ data: null, error: "Request is missing 'id' parameter" }); // Not sure about the status code
+  }
+
   try {
-    const json = await SpoonacularAPI.get(
-      `/recipes/${req.params.id}/information`
-    );
+    const json = await SpoonacularAPI.get(`/recipes/${id}/information`);
     return res.status(200).json({ data: json, error: null });
   } catch (err) {
     return res.status(500).json({ data: null, error: err });

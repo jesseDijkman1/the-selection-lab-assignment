@@ -1,5 +1,6 @@
-import { eventListener, replaceContent, show, useTemplate } from "../lib/utils";
-import state from "../lib/StateManager";
+import { replaceContent, show, useTemplate } from "../lib/utils";
+import state, { StateManager } from "../lib/StateManager";
+import BEM from "../lib/BEM";
 
 const recipeItemSkeleton = `
 <div class="recipe-item-loader">
@@ -15,8 +16,10 @@ const recipeItemSkeleton = `
   </div>
 `;
 
+const COMPONENT_NAME = "recipes-overview";
+
 window.customElements.define(
-  "recipes-overview",
+  COMPONENT_NAME,
   class RecipesOverview extends HTMLElement {
     eventListeners: (() => void)[] | undefined;
 
@@ -38,19 +41,21 @@ window.customElements.define(
         replaceContent(list, loaders);
       };
 
-      const handleRecipesUpdate: Parameters<typeof state.on>[1] = (state) => {
+      const handleRecipesUpdate = (state: StateManager.StateObject) => {
         const recipeItems = state.recipes.map((recipe) => {
-          const ingredientItems = recipe.ingredients.map((ingredient: any) =>
-            createIngredientItem({
+          const ingredientItems = recipe.ingredients.map((ingredient) => {
+            const exactMatch = state.ingredients.includes(ingredient.name);
+
+            return createIngredientItem({
               ingredient: ingredient.name,
               "data-ingredient": ingredient.name,
-              class: `ingredient-button ${
-                ingredient.missing
-                  ? ""
-                  : "ingredient-button--static ingredient-button--active"
-              }`,
-            })
-          );
+              class: new BEM("ingredient-button").STATIC.clearChainIf(
+                exactMatch
+              )
+                .ACTIVE.clearChainIf(ingredient.missing)
+                .RAW.toString(),
+            });
+          });
 
           return createRecipeItem({
             src: recipe.image,
@@ -73,6 +78,8 @@ window.customElements.define(
       ];
     }
 
-    disconnectedCallback() {}
+    disconnectedCallback() {
+      for (let removeListener of this.eventListeners ?? []) removeListener();
+    }
   }
 );

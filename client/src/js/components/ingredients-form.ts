@@ -1,5 +1,6 @@
-import { eventListener, wait } from "../lib/utils";
+import { eventListener } from "../lib/utils";
 import state from "../lib/StateManager";
+import RecipesAPI from "../lib/RecipesAPI";
 
 window.customElements.define(
   "ingredients-form",
@@ -11,7 +12,7 @@ window.customElements.define(
         'button[type="submit"]'
       )!;
 
-      const handleSubmit = async (e: Event) => {
+      const handleSubmit = async (e: SubmitEvent) => {
         e.preventDefault();
 
         const { ingredients } = state.getState();
@@ -22,15 +23,11 @@ window.customElements.define(
         try {
           state.emit("recipes:updating");
 
-          const response = await fetch(
-            `http://localhost:3000/recipes/search?ingredients=${ingredients}`
-          );
-          const { error, data }: { error: any; data: any } =
-            await response.json();
+          const recipes = await RecipesAPI.fetch("search", {
+            ingredients: ingredients.join(","),
+          });
 
-          if (error !== null) throw new Error(error);
-
-          state.emit("recipes:update", { recipes: data });
+          state.emit("recipes:update", { recipes: recipes });
         } catch (err) {
           console.error(err);
         }
@@ -42,6 +39,10 @@ window.customElements.define(
         }),
         eventListener("submit", this, handleSubmit),
       ];
+    }
+
+    disconnectedCallback() {
+      for (let removeListener of this.eventListeners ?? []) removeListener();
     }
   }
 );

@@ -1,23 +1,16 @@
-/**
- * Adds an event listener to one or more HTML elements and returns a function to remove it.
- *
- * @param {string} eventName - The name of the event to listen for (e.g., "click").
- * @param {HTMLElement | HTMLElement[]} element - A single HTMLElement or an array of HTMLElements to attach the event listener to.
- * @param {(e: Event) => void} fn - The callback function to execute when the event is triggered.
- * @returns {() => void} A function that removes the event listener from all specified elements.
- */
-export const eventListener = (
-  eventName: string,
+export const eventListener = <T extends keyof HTMLElementEventMap>(
+  eventName: T,
   element: HTMLElement | HTMLElement[],
-  fn: (e: Event) => void,
+  fn: (e: HTMLElementEventMap[T]) => void,
   options: EventListenerOptions | boolean = {}
 ): (() => void) => {
   const elements = Array.isArray(element) ? element : [element];
 
-  elements.forEach((el) => el.addEventListener(eventName, fn, options));
+  for (let el of elements) el.addEventListener(eventName, fn, options);
 
-  return () =>
-    elements.forEach((el) => el.removeEventListener(eventName, fn, options));
+  return () => {
+    for (let el of elements) el.removeEventListener(eventName, fn, options);
+  };
 };
 
 /**

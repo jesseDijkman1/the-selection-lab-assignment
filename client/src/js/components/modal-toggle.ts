@@ -22,6 +22,8 @@ window.customElements.define(
       this.eventListeners = [eventListener("click", this, toggleModal)];
     }
 
-    disconnectedCallback() {}
+    disconnectedCallback() {
+      for (let removeListener of this.eventListeners ?? []) removeListener();
+    }
   }
 );

@@ -7,11 +7,15 @@ import {
   onFocusLost,
   repaint,
 } from "../lib/utils";
-import state from "../lib/StateManager";
-import Autocomplete from "../lib/Autocomplete";
+import IngredientAPI, { IngredientsAPITypes } from "../lib/IngredientsAPI";
+import BEM from "../lib/BEM";
+
+const [COMPONENT_NAME, BEM_OPEN, BEM_NO_RESULTS] = new BEM(
+  "ingredients-selector"
+).RAW.OPEN.NO_RESULTS;
 
 window.customElements.define(
-  "ingredients-selector",
+  COMPONENT_NAME,
   class IngredientsSelector extends HTMLElement {
     eventListeners: (() => void)[] | undefined;
 
@@ -23,13 +27,8 @@ window.customElements.define(
 
       const createIngredientButton = useTemplate<HTMLLIElement>(template);
 
-      const ingredientsAutocomplete = new Autocomplete("ingredients", {});
-
       // Component state
-      let selectorItems: Array<{
-        name: string;
-        image: string;
-      }> = [];
+      let selectorItems: IngredientsAPITypes.IngredientObject[] = [];
       let dropdownIsOpen = false;
 
       const openDropdown = () => {
@@ -37,9 +36,7 @@ window.customElements.define(
         dropdownIsOpen = true;
         show(autocompleteContainer);
         repaint(autocompleteContainer);
-        autocompleteContainer.classList.add(
-          "ingredients-selector__dropdown--open"
-        );
+        autocompleteContainer.classList.add(BEM_OPEN);
       };
 
       const closeDropdown = () => {
@@ -56,9 +53,7 @@ window.customElements.define(
           }
         );
 
-        autocompleteContainer.classList.remove(
-          "ingredients-selector__dropdown--open"
-        );
+        autocompleteContainer.classList.remove(BEM_OPEN);
       };
 
       const updateSelector = () => {
@@ -83,13 +78,10 @@ window.customElements.define(
           selectorItems =
             inputValue.length === 0
               ? []
-              : await ingredientsAutocomplete.query(inputValue);
+              : await IngredientAPI.fetch("search", { q: inputValue });
 
-          if (selectorItems.length === 0) {
-            this.classList.add("ingredients-selector--no-results");
-          } else {
-            this.classList.remove("ingredients-selector--no-results");
-          }
+          this.classList.toggle(BEM_NO_RESULTS, selectorItems.length === 0);
+
           updateSelector();
           openDropdown();
         } catch (err) {
@@ -112,9 +104,7 @@ window.customElements.define(
     }
 
     disconnectedCallback() {
-      if (this.eventListeners) {
-        for (let removeListener of this.eventListeners) removeListener();
-      }
+      for (let removeListener of this.eventListeners ?? []) removeListener();
     }
   }
 );
