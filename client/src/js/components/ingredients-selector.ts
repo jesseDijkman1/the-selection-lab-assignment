@@ -7,8 +7,7 @@ import {
   onFocusLost,
   repaint,
 } from "../lib/utils";
-import state from "../lib/StateManager";
-import Autocomplete from "../lib/Autocomplete";
+import IngredientAPI, { IngredientsAPITypes } from "../lib/IngredientsAPI";
 
 window.customElements.define(
   "ingredients-selector",
@@ -23,13 +22,8 @@ window.customElements.define(
 
       const createIngredientButton = useTemplate<HTMLLIElement>(template);
 
-      const ingredientsAutocomplete = new Autocomplete("ingredients", {});
-
       // Component state
-      let selectorItems: Array<{
-        name: string;
-        image: string;
-      }> = [];
+      let selectorItems: IngredientsAPITypes.IngredientObject[] = [];
       let dropdownIsOpen = false;
 
       const openDropdown = () => {
@@ -83,7 +77,7 @@ window.customElements.define(
           selectorItems =
             inputValue.length === 0
               ? []
-              : await ingredientsAutocomplete.query(inputValue);
+              : await IngredientAPI.fetch("search", { q: inputValue });
 
           if (selectorItems.length === 0) {
             this.classList.add("ingredients-selector--no-results");
