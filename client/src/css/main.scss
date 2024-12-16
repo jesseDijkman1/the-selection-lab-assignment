@@ -1,48 +1,5 @@
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: system-ui;
-}
-
-[hidden] {
-  display: none !important;
-}
-
-// Utility classes
-
-/* Search form */
-.search-form {
-  display: flex;
-  position: relative;
-  width: fit-content;
-
-  &__input {
-  }
-
-  &__submit {
-  }
-
-  &__autocomplete {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    display: flex;
-    flex-direction: column;
-    background-color: blue;
-    width: 100%;
-
-    &-list {
-      background-color: green;
-
-      &-item {
-        background-color: red;
-      }
-    }
-  }
-}
+@use "./reset.scss";
+@use "./fonts.scss";
+@use "./layout.scss";
+@use "./base";
+@use "./components";
