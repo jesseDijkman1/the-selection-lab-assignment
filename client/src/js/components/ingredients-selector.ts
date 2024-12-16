@@ -106,9 +106,7 @@ window.customElements.define(
     }
 
     disconnectedCallback() {
-      if (this.eventListeners) {
-        for (let removeListener of this.eventListeners) removeListener();
-      }
+      for (let removeListener of this.eventListeners ?? []) removeListener();
     }
   }
 );

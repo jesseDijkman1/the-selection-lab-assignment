@@ -1,6 +1,5 @@
-import { eventListener, hide, show, useTemplate } from "../lib/utils";
-import state from "../lib/StateManager";
-import Autocomplete from "../lib/Autocomplete";
+import { eventListener, useTemplate } from "../lib/utils";
+import state, { StateManager } from "../lib/StateManager";
 
 window.customElements.define(
   "ingredients-overview",
@@ -14,9 +13,7 @@ window.customElements.define(
       const createListItem = useTemplate(template);
 
       // Parameters are not typed
-      const handleIngredientsUpdate: Parameters<typeof state.on>[1] = (
-        state
-      ) => {
+      const handleIngredientsUpdate = (state: StateManager.StateObject) => {
         if (state.ingredients.length > 0) {
           this.classList.remove("ingredients-overview--empty");
         } else {
@@ -53,6 +50,10 @@ window.customElements.define(
         state.on("ingredients:update", handleIngredientsUpdate),
         eventListener("click", this, handleClick),
       ];
+    }
+
+    disconnectedCallback() {
+      for (let removeListener of this.eventListeners ?? []) removeListener();
     }
   }
 );

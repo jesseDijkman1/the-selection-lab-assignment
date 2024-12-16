@@ -1,10 +1,14 @@
 import { RecipesAPITypes } from "./RecipesAPI";
 
-type ListenerCallback<T> = (state: T, data: any) => void;
+export namespace StateManager {
+  export type ListenerCallback<T> = (state: T, data: any) => void;
+
+  export type StateObject = typeof initialState;
+}
 
 class StateManager<T extends Record<string, any>> {
   private state: T;
-  private listeners: Record<string, ListenerCallback<T>[]>;
+  private listeners: Record<string, StateManager.ListenerCallback<T>[]>;
 
   constructor(initialState: T) {
     this.state = { ...initialState };
@@ -17,7 +21,7 @@ class StateManager<T extends Record<string, any>> {
    * @param cb - The callback function to execute when the event is emitted.
    * @returns A function to unsubscribe the listener.
    */
-  on(eventName: string, cb: ListenerCallback<T>) {
+  on(eventName: string, cb: StateManager.ListenerCallback<T>) {
     if (!this.listeners[eventName]) this.listeners[eventName] = [];
 
     this.listeners[eventName].push(cb);
@@ -56,10 +60,12 @@ class StateManager<T extends Record<string, any>> {
   }
 }
 
-const state = new StateManager({
+const initialState = {
   ingredients: [] as string[],
   recipes: [] as RecipesAPITypes.RecipeObject[],
   openModal: null as null | string,
-});
+};
+
+const state = new StateManager<StateManager.StateObject>(initialState);
 
 export default state;

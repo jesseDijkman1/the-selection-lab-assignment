@@ -1,5 +1,5 @@
 import { eventListener } from "../lib/utils";
-import state from "../lib/StateManager";
+import state, { StateManager } from "../lib/StateManager";
 
 window.customElements.define(
   "ingredient-button",
@@ -12,7 +12,7 @@ window.customElements.define(
       const button = this.querySelector("button")!;
       const thisIngredient = this.getAttribute("data-ingredient")!;
 
-      const handleClick = (e: Event) => {
+      const handleClick = () => {
         const currentState = state.getState();
         const ingredientIsAdded =
           currentState.ingredients.includes(thisIngredient);
@@ -26,9 +26,7 @@ window.customElements.define(
         });
       };
 
-      const handleIngredientUpdate: Parameters<typeof state.on>[1] = (
-        state
-      ) => {
+      const handleIngredientUpdate = (state: StateManager.StateObject) => {
         if (state.ingredients.includes(thisIngredient)) {
           this.classList.add("ingredient-button--active");
         } else {
@@ -42,6 +40,8 @@ window.customElements.define(
       ];
     }
 
-    disconnectedCallback() {}
+    disconnectedCallback() {
+      for (let removeListener of this.eventListeners ?? []) removeListener();
+    }
   }
 );

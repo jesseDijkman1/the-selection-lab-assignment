@@ -1,5 +1,5 @@
 import { eventListener, replaceContent, show, useTemplate } from "../lib/utils";
-import state from "../lib/StateManager";
+import state, { StateManager } from "../lib/StateManager";
 
 const recipeItemSkeleton = `
 <div class="recipe-item-loader">
@@ -38,7 +38,7 @@ window.customElements.define(
         replaceContent(list, loaders);
       };
 
-      const handleRecipesUpdate: Parameters<typeof state.on>[1] = (state) => {
+      const handleRecipesUpdate = (state: StateManager.StateObject) => {
         const recipeItems = state.recipes.map((recipe) => {
           const ingredientItems = recipe.ingredients.map((ingredient: any) =>
             createIngredientItem({
@@ -73,6 +73,8 @@ window.customElements.define(
       ];
     }
 
-    disconnectedCallback() {}
+    disconnectedCallback() {
+      for (let removeListener of this.eventListeners ?? []) removeListener();
+    }
   }
 );

@@ -1,6 +1,7 @@
-import { eventListener, wait } from "../lib/utils";
+import { eventListener } from "../lib/utils";
 import state from "../lib/StateManager";
 import RecipesAPI from "../lib/RecipesAPI";
+
 window.customElements.define(
   "ingredients-form",
   class IngredientsForm extends HTMLElement {
@@ -11,7 +12,7 @@ window.customElements.define(
         'button[type="submit"]'
       )!;
 
-      const handleSubmit = async (e: Event) => {
+      const handleSubmit = async (e: SubmitEvent) => {
         e.preventDefault();
 
         const { ingredients } = state.getState();
@@ -38,6 +39,10 @@ window.customElements.define(
         }),
         eventListener("submit", this, handleSubmit),
       ];
+    }
+
+    disconnectedCallback() {
+      for (let removeListener of this.eventListeners ?? []) removeListener();
     }
   }
 );
