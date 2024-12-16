@@ -17,8 +17,14 @@ window.customElements.define(
       const handleIngredientsUpdate: Parameters<typeof state.on>[1] = (
         state
       ) => {
+        if (state.ingredients.length > 0) {
+          this.classList.remove("ingredients-overview--empty");
+        } else {
+          this.classList.add("ingredients-overview--empty");
+        }
+
         const listItems = state.ingredients.map((ingredient: string) =>
-          createListItem({ content: ingredient, "data-ingredient": ingredient })
+          createListItem({ ingredient, "data-ingredient": ingredient })
         );
 
         list.innerHTML = "";
