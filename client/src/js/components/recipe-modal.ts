@@ -1,5 +1,6 @@
 import { eventListener, onClickOutside, useTemplate } from "../lib/utils";
 import state from "../lib/StateManager";
+import RecipesAPI from "../lib/RecipesAPI";
 
 window.customElements.define(
   "recipe-modal",
@@ -18,15 +19,14 @@ window.customElements.define(
       // Fetch the recipe information and generate the content
       const loadModalContent = async (id: string) => {
         try {
-          const response = await fetch(`http://localhost:3000/recipes/${id}`);
-          const json = await response.json();
+          const recipe = await RecipesAPI.fetch("details", { id });
 
           const modalContent = createModalContent({
-            src: json.data.image,
-            alt: json.data.title,
-            title: json.data.title,
-            description: json.data.summary,
-            instructions: json.data.instructions,
+            src: recipe.image,
+            alt: recipe.title,
+            title: recipe.title,
+            description: recipe.summary,
+            instructions: recipe.instructions,
           });
 
           body.appendChild(modalContent);

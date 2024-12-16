@@ -1,6 +1,6 @@
 import { eventListener, wait } from "../lib/utils";
 import state from "../lib/StateManager";
-
+import RecipesAPI from "../lib/RecipesAPI";
 window.customElements.define(
   "ingredients-form",
   class IngredientsForm extends HTMLElement {
@@ -22,15 +22,11 @@ window.customElements.define(
         try {
           state.emit("recipes:updating");
 
-          const response = await fetch(
-            `http://localhost:3000/recipes/search?ingredients=${ingredients}`
-          );
-          const { error, data }: { error: any; data: any } =
-            await response.json();
+          const recipes = await RecipesAPI.fetch("search", {
+            ingredients: ingredients.join(","),
+          });
 
-          if (error !== null) throw new Error(error);
-
-          state.emit("recipes:update", { recipes: data });
+          state.emit("recipes:update", { recipes: recipes });
         } catch (err) {
           console.error(err);
         }
