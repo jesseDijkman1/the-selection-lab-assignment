@@ -1,4 +1,4 @@
-import { eventListener } from "../lib/utils";
+import { eventListener, wait } from "../lib/utils";
 import state from "../lib/StateManager";
 
 window.customElements.define(
@@ -7,6 +7,10 @@ window.customElements.define(
     eventListeners: (() => void)[] | undefined;
 
     connectedCallback() {
+      const submitButton = this.querySelector<HTMLButtonElement>(
+        'button[type="submit"]'
+      )!;
+
       const handleSubmit = async (e: Event) => {
         e.preventDefault();
 
@@ -16,6 +20,8 @@ window.customElements.define(
           alert("Please select ingredients to continue");
 
         try {
+          state.emit("recipes:updating");
+
           const response = await fetch(
             `http://localhost:3000/recipes/search?ingredients=${ingredients}`
           );
@@ -30,7 +36,12 @@ window.customElements.define(
         }
       };
 
-      this.eventListeners = [eventListener("submit", this, handleSubmit)];
+      this.eventListeners = [
+        state.on("ingredients:update", (state) => {
+          submitButton.disabled = state.ingredients.length === 0;
+        }),
+        eventListener("submit", this, handleSubmit),
+      ];
     }
   }
 );

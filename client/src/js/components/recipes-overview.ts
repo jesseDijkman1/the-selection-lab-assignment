@@ -1,5 +1,19 @@
-import { eventListener, replaceContent, useTemplate } from "../lib/utils";
+import { eventListener, replaceContent, show, useTemplate } from "../lib/utils";
 import state from "../lib/StateManager";
+
+const recipeItemSkeleton = `
+<div class="recipe-item-loader">
+    <div class="recipe-item-loader__image"></div>
+    <div class="recipe-item-loader__content">
+      <div class="recipe-item-loader__title"></div>
+      <div class="recipe-item-loader__ingredients">
+        <div class="recipe-item-loader__ingredient"></div>
+        <div class="recipe-item-loader__ingredient"></div>
+        <div class="recipe-item-loader__ingredient"></div>
+      </div>
+    </div>
+  </div>
+`;
 
 window.customElements.define(
   "recipes-overview",
@@ -7,18 +21,33 @@ window.customElements.define(
     eventListeners: (() => void)[] | undefined;
 
     connectedCallback() {
+      const list = this.querySelector("ul")!;
       const [recipeTemplate, ingredientTemplate] =
         this.querySelectorAll("template")!;
+
       const createRecipeItem = useTemplate(recipeTemplate);
       const createIngredientItem = useTemplate(ingredientTemplate);
+
+      const setLoadingState = () => {
+        const div = document.createElement("div");
+        div.innerHTML = recipeItemSkeleton;
+        const loaders = Array(5)
+          .fill("")
+          .map(() => div.firstElementChild?.cloneNode(true) as HTMLElement);
+
+        replaceContent(list, loaders);
+      };
 
       const handleRecipesUpdate: Parameters<typeof state.on>[1] = (state) => {
         const recipeItems = state.recipes.map((recipe) => {
           const ingredientItems = recipe.ingredients.map((ingredient: any) =>
             createIngredientItem({
-              content: ingredient.name,
-              class: `recipe__ingredient ${
-                ingredient.missing ? "recipe__ingredient--missing" : ""
+              ingredient: ingredient.name,
+              "data-ingredient": ingredient.name,
+              class: `ingredient-button ${
+                ingredient.missing
+                  ? ""
+                  : "ingredient-button--static ingredient-button--active"
               }`,
             })
           );
@@ -28,14 +57,20 @@ window.customElements.define(
             alt: recipe.title,
             title: recipe.title,
             id: recipe.id,
+            "data-modal-id": recipe.id,
             ingredients: ingredientItems,
           });
         });
 
-        replaceContent(this, recipeItems);
+        show(this);
+
+        replaceContent(list, recipeItems);
       };
 
-      this.eventListeners = [state.on("recipes:update", handleRecipesUpdate)];
+      this.eventListeners = [
+        state.on("recipes:updating", setLoadingState),
+        state.on("recipes:update", handleRecipesUpdate),
+      ];
     }
 
     disconnectedCallback() {}
