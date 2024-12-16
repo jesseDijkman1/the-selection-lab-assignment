@@ -1,0 +1,85 @@
+@use "./../utils.scss" as utils;
+
+.ingredient-button {
+  $base: &;
+
+  display: block;
+
+  &--static {
+    pointer-events: none;
+  }
+
+  &__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(
+        to bottom right,
+        rgba(138, 176, 220, 0.2) 0%,
+        rgba(255, 255, 255, 0.2) 100%
+      ),
+      #f6fafc;
+    appearance: none;
+    border: none;
+    font-family: Lexend;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 0.25rem;
+    color: #343a4b;
+    text-transform: capitalize;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    @at-root #{$base}--active & {
+      background: linear-gradient(
+          to bottom right,
+          rgba(227, 218, 9, 0.2) 0%,
+          rgba(255, 255, 255, 0.2) 100%
+        ),
+        #21a94f;
+      color: #e3f1e6;
+
+      &:hover {
+        background: linear-gradient(
+            to bottom right,
+            rgba(53, 9, 227, 0.2) 0%,
+            rgba(255, 255, 255, 0.2) 100%
+          ),
+          #a93121;
+      }
+    }
+  }
+
+  &__text {
+    @at-root #{$base}__button:hover & {
+      text-decoration: underline;
+    }
+  }
+
+  &__icon {
+    width: 12px;
+    height: auto;
+
+    & path {
+      d: path(
+        "M59 11.5C59 6.80558 55.1944 3 50.5 3C45.8056 3 42 6.80558 42 11.5V41H12.5C7.80558 41 4 44.8056 4 49.5C4 54.1944 7.80558 58 12.5 58H42V86.5C42 91.1944 45.8056 95 50.5 95C55.1944 95 59 91.1944 59 86.5V58H87.5C92.1944 58 96 54.1944 96 49.5C96 44.8056 92.1944 41 87.5 41H59V11.5Z"
+      );
+
+      @at-root #{$base}--active & {
+        d: path(
+          "M93.7307 8.32995C97.6912 10.8503 98.8587 16.104 96.3384 20.0645L49.6116 93.4923L6.68807 64.0073C2.81862 61.3493 1.83654 56.0578 4.49454 52.1883C7.15254 48.3189 12.4441 47.3368 16.3135 49.9948L44.723 69.5098L81.9962 10.9376C84.5165 6.97713 89.7702 5.80963 93.7307 8.32995Z"
+        );
+      }
+
+      @at-root #{$base}--active #{$base}__button:hover & {
+        d: path(
+          "M7.48959 6.48959C10.809 3.17014 16.191 3.17014 19.5104 6.48959L50.5 37.4792L81.4896 6.48959C84.8091 3.17014 90.1909 3.17014 93.5104 6.48959C96.8299 9.80905 96.8299 15.191 93.5104 18.5104L62.5208 49.5L93.5104 80.4896C96.8299 83.8091 96.8299 89.1909 93.5104 92.5104C90.1909 95.8299 84.8091 95.8299 81.4896 92.5104L50.5 61.5208L19.5104 92.5104C16.191 95.8299 10.809 95.8299 7.48959 92.5104C4.17014 89.1909 4.17014 83.8091 7.48959 80.4896L38.4792 49.5L7.48959 18.5104C4.17014 15.191 4.17014 9.80905 7.48959 6.48959Z"
+        );
+      }
+    }
+  }
+}
