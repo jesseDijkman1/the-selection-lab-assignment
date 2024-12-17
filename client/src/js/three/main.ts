@@ -30,9 +30,9 @@ const timeTransitioner = new TimeTransitioner(2000);
 
 const curvePath = new CurvePath(
   [
-    viewportCorners.getPoint(width / 2 + 300, height, -1),
-    viewportCorners.getPoint(width / 2 - 250, height / 2, 3),
-    viewportCorners.getPoint(width / 2 - 200, 20, 9),
+    viewportCorners.getPoint(width / 2 + 300, height / 2, -1),
+    viewportCorners.getPoint(width / 2 - 100, height / 4, 3),
+    viewportCorners.getPoint(width / 2 - 180, 20, 9),
   ],
   10,
   timeTransitioner
@@ -60,7 +60,6 @@ async function init() {
   if (models.fridge) {
     fridge = new Fridge(models.fridge, camera, curvePath);
     fridge.render(scene);
-    fridge.show();
   }
 
   const light1 = new THREE.AmbientLight(0xffffff, 2);

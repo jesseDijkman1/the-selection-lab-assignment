@@ -8,7 +8,6 @@ class Fridge {
   private componentsMap: Record<string, THREE.Object3D | THREE.Mesh>;
   private initialTimestamp: number | null;
   private isVisible: boolean;
-  private isHiding: boolean;
 
   constructor(
     private readonly components: Array<THREE.Object3D | THREE.Mesh>,
@@ -18,32 +17,20 @@ class Fridge {
     this.group = new THREE.Object3D();
     this.componentsMap = {};
     this.initialTimestamp = null;
-    this.isVisible = false;
-    this.isHiding = false;
+    this.isVisible = state.getState().formFocussedByUser;
 
-    state.on("recipes:updating", (state) => {
-      if (state.ingredients.length > 0 && this.isVisible) {
-        this.hide();
-      } else if (state.ingredients.length === 0 && !this.isVisible) {
-        this.show();
-      }
+    state.on("ingredients-form:focus", () => {
+      if (this.isVisible) return;
+      this.isVisible = true;
+      this.group.visible = true;
     });
-  }
-
-  hide() {
-    this.isVisible = false;
-  }
-
-  show() {
-    this.initialTimestamp = null;
-    this.isVisible = true;
   }
 
   resetMaterials() {
     for (let component of this.components) {
       if ("isMesh" in component && component.isMesh) {
         let color = 0xffffff;
-        console.log(component.name);
+
         if (component.name.includes("apple")) {
           color = 0xff0000;
         }
@@ -67,6 +54,7 @@ class Fridge {
     for (let component of this.components) {
       this.componentsMap[component.name] = component;
     }
+    this.group.visible = this.isVisible;
     this.group.add(...this.components);
     scene.add(this.group);
   }
@@ -84,10 +72,11 @@ class Fridge {
 
     this.group.position.copy(point);
 
+    const rotationN = easeInOutCubic(Math.min(1, deltaT / 10000));
     const lookAtVector = point
       .clone()
       .add(tangent.normalize())
-      .lerp(this.camera.position, n);
+      .lerp(this.camera.position, rotationN);
     this.group.lookAt(lookAtVector);
 
     const openAngle = Math.PI;
@@ -96,8 +85,6 @@ class Fridge {
 
     targetQuaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), openAngle);
 
-    const rotationN = easeInOutCubic(Math.min(1, deltaT / 10000));
-
     door.quaternion.copy(initialQuaternion).slerp(targetQuaternion, rotationN);
   }
 
@@ -105,11 +92,6 @@ class Fridge {
     if (this.initialTimestamp === null) {
       if (!this.isVisible) return;
 
-      this.initialTimestamp = t;
-    }
-
-    if (!this.isVisible && !this.isHiding) {
-      this.isHiding = true;
       this.initialTimestamp = t;
     }
 

@@ -64,6 +64,7 @@ const initialState = {
   ingredients: [] as string[],
   recipes: [] as RecipesAPITypes.RecipeObject[],
   openModal: null as null | string,
+  formFocussedByUser: false,
 };
 
 const state = new StateManager<StateManager.StateObject>(initialState);
