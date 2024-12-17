@@ -9,4 +9,4 @@ import.meta.glob("./components/*", { eager: true });
 
 setTimeout(async () => {
   await import("./three/main");
-}, 3000);
+}, 0);
