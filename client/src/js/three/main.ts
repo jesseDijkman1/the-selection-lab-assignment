@@ -32,7 +32,11 @@ const curvePath = new CurvePath(
   [
     viewportCorners.getPoint(width / 2 + 300, height / 2, -1),
     viewportCorners.getPoint(width / 2 - 100, height / 4, 3),
-    viewportCorners.getPoint(width / 2 - 180, 20, 9),
+    viewportCorners.getPoint(
+      width / 2 - 180,
+      20,
+      9 - (window.innerWidth < 1000 ? 1 : 0)
+    ),
   ],
   10,
   timeTransitioner

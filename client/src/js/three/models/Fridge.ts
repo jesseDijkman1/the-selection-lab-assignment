@@ -7,7 +7,6 @@ class Fridge {
   private readonly group: THREE.Object3D;
   private componentsMap: Record<string, THREE.Object3D | THREE.Mesh>;
   private initialTimestamp: number | null;
-  private isVisible: boolean;
 
   constructor(
     private readonly components: Array<THREE.Object3D | THREE.Mesh>,
@@ -17,13 +16,6 @@ class Fridge {
     this.group = new THREE.Object3D();
     this.componentsMap = {};
     this.initialTimestamp = null;
-    this.isVisible = state.getState().formFocussedByUser;
-
-    state.on("ingredients-form:focus", () => {
-      if (this.isVisible) return;
-      this.isVisible = true;
-      this.group.visible = true;
-    });
   }
 
   resetMaterials() {
@@ -54,15 +46,13 @@ class Fridge {
     for (let component of this.components) {
       this.componentsMap[component.name] = component;
     }
-    this.group.visible = this.isVisible;
     this.group.add(...this.components);
     scene.add(this.group);
   }
 
   transition(deltaT: number) {
     const door = this.componentsMap.fridge_door;
-    const progress = Math.min(1, deltaT / 3000);
-    const n = easeInOutCubic(this.isVisible ? progress : 1 - progress);
+    const n = easeInOutCubic(Math.min(1, deltaT / 3000));
 
     const points = this.curvePath.getPoints();
     const curve = new THREE.CatmullRomCurve3(points);
@@ -90,8 +80,6 @@ class Fridge {
 
   update(t: number) {
     if (this.initialTimestamp === null) {
-      if (!this.isVisible) return;
-
       this.initialTimestamp = t;
     }
 
