@@ -32,6 +32,7 @@ class BEM {
   static EMPTY = BEM.createTransformer("empty");
   static NO_RESULTS = BEM.createTransformer("no-results");
   static STATIC = BEM.createTransformer("static");
+  static INVISIBLE = BEM.createTransformer("invisible");
 
   get RAW() {
     return this.p(this.b);
@@ -55,6 +56,10 @@ class BEM {
 
   get STATIC() {
     return this.p(BEM.STATIC(this.b));
+  }
+
+  get INVISIBLE() {
+    return this.p(BEM.INVISIBLE(this.b));
   }
 
   *[Symbol.iterator]() {

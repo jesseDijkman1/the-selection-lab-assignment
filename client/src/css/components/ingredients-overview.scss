@@ -1,13 +1,12 @@
 .ingredients-overview {
+  $root: &;
+
   display: flex;
   flex-direction: column;
   transition: opacity 0.3s ease;
 
-  &--empty {
+  &--invisible {
     opacity: 0;
-  }
-
-  &__title {
   }
 
   &__list {
@@ -15,5 +14,13 @@
     flex-wrap: wrap;
     gap: 0.5rem;
     margin-top: 1rem;
+  }
+
+  &__empty-message {
+    display: none;
+
+    @at-root #{$root}__list:empty + & {
+      display: inline;
+    }
   }
 }
