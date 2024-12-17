@@ -1,11 +1,14 @@
 import * as THREE from "three";
 import { easeInOutCubic } from "../utils";
 import CurvePath from "../CurvePath";
+import state from "../../lib/StateManager";
 
 class Fridge {
   private readonly group: THREE.Object3D;
   private componentsMap: Record<string, THREE.Object3D | THREE.Mesh>;
-  private initialTimestamp: number;
+  private initialTimestamp: number | null;
+  private isVisible: boolean;
+  private isHiding: boolean;
 
   constructor(
     private readonly components: Array<THREE.Object3D | THREE.Mesh>,
@@ -14,14 +17,43 @@ class Fridge {
   ) {
     this.group = new THREE.Object3D();
     this.componentsMap = {};
-    this.initialTimestamp = null!;
+    this.initialTimestamp = null;
+    this.isVisible = false;
+    this.isHiding = false;
+
+    state.on("recipes:updating", (state) => {
+      if (state.ingredients.length > 0 && this.isVisible) {
+        this.hide();
+      } else if (state.ingredients.length === 0 && !this.isVisible) {
+        this.show();
+      }
+    });
+  }
+
+  hide() {
+    this.isVisible = false;
+  }
+
+  show() {
+    this.initialTimestamp = null;
+    this.isVisible = true;
   }
 
   resetMaterials() {
     for (let component of this.components) {
       if ("isMesh" in component && component.isMesh) {
+        let color = 0xffffff;
+        console.log(component.name);
+        if (component.name.includes("apple")) {
+          color = 0xff0000;
+        }
+
+        if (component.name.includes("milk")) {
+          color = 0xc0dee5;
+        }
+
         component.material = new THREE.MeshPhongMaterial({
-          color: 0xffffff,
+          color,
           emissive: 0x000000,
           specular: 0x000000,
         });
@@ -41,7 +73,8 @@ class Fridge {
 
   transition(deltaT: number) {
     const door = this.componentsMap.fridge_door;
-    const n = easeInOutCubic(Math.min(1, deltaT / 3000));
+    const progress = Math.min(1, deltaT / 3000);
+    const n = easeInOutCubic(this.isVisible ? progress : 1 - progress);
 
     const points = this.curvePath.getPoints();
     const curve = new THREE.CatmullRomCurve3(points);
@@ -70,6 +103,13 @@ class Fridge {
 
   update(t: number) {
     if (this.initialTimestamp === null) {
+      if (!this.isVisible) return;
+
+      this.initialTimestamp = t;
+    }
+
+    if (!this.isVisible && !this.isHiding) {
+      this.isHiding = true;
       this.initialTimestamp = t;
     }
 

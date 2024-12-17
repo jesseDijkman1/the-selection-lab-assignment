@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import { createNoise4D } from "simplex-noise";
-import Book from "./models/Book";
 import Fridge from "./models/Fridge";
 import ModelsLoader from "./ModelsLoader";
 import SceneDepthDimensions from "./SceneDepthDimensions";
@@ -26,7 +25,6 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setClearColor(0x000000, 0);
 renderer.setSize(width, height);
 
-const modelsLoader = new ModelsLoader();
 const viewportCorners = new SceneDepthDimensions(-5, camera, scene);
 const timeTransitioner = new TimeTransitioner(2000);
 
@@ -54,24 +52,16 @@ curvePath.addPointsTransformer("applyNoiseX", (point, { state }) => {
 
 curvePath.definePipeline("noise", ["applyNoiseX"], true);
 
-let book: Book;
 let fridge: Fridge;
 
 async function init() {
-  const models = await modelsLoader.load();
+  const models = await ModelsLoader.load();
 
   if (models.fridge) {
     fridge = new Fridge(models.fridge, camera, curvePath);
     fridge.render(scene);
+    fridge.show();
   }
-
-  if (models.book) {
-    book = new Book(models.book, camera, curvePath);
-    book.render(scene);
-  }
-
-  // await book.load();
-  // book.render(scene);
 
   const light1 = new THREE.AmbientLight(0xffffff, 2);
   const light = new THREE.PointLight(0xffffff, 500);
@@ -86,9 +76,6 @@ init();
 function animate(time: number) {
   timeTransitioner.update(time);
   curvePath.update();
-  // book.update(t);
   fridge.update(time);
-  // controls.update();
-
   renderer.render(scene, camera);
 }
