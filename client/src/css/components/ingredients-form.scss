@@ -1,5 +1,10 @@
 .ingredients-form {
   &__submit {
     margin-top: 1rem;
+    width: 100%;
+
+    @media screen and (min-width: 800px) {
+      width: auto;
+    }
   }
 }

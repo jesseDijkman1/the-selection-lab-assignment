@@ -30,6 +30,7 @@ window.customElements.define(
             title: recipe.title,
             description: recipe.summary,
             instructions: recipe.instructions,
+            "data-modal-id": recipe.id,
           });
 
           body.appendChild(modalContent);

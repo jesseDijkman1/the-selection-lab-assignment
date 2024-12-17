@@ -9,6 +9,7 @@ import {
 } from "../lib/utils";
 import IngredientAPI, { IngredientsAPITypes } from "../lib/IngredientsAPI";
 import BEM from "../lib/BEM";
+import state from "../lib/StateManager";
 
 const [COMPONENT_NAME, BEM_OPEN, BEM_NO_RESULTS] = new BEM(
   "ingredients-selector"
@@ -95,6 +96,7 @@ window.customElements.define(
           "focus",
           this,
           () => {
+            state.emit("ingredients-form:focus", { formFocussedByUser: true });
             if (input.value.length > 0) openDropdown();
           },
           true

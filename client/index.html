@@ -19,6 +19,15 @@
         <h2 class="recipe-modal__title" data-template-content="title"></h2>
 
         <div class="recipe-modal__image-container">
+          <modal-toggle class="recipe-modal__close-button" data-template-attributes="data-modal-id">
+            <button type="button">
+              <svg width="91" height="91" viewBox="0 0 91 91" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M2.48959 2.48959C5.80905 -0.829864 11.191 -0.829864 14.5104 2.48959L45.5 33.4792L76.4896 2.48959C79.8091 -0.829864 85.1909 -0.829864 88.5104 2.48959C91.8299 5.80905 91.8299 11.191 88.5104 14.5104L57.5208 45.5L88.5104 76.4896C91.8299 79.8091 91.8299 85.1909 88.5104 88.5104C85.1909 91.8299 79.8091 91.8299 76.4896 88.5104L45.5 57.5208L14.5104 88.5104C11.191 91.8299 5.80905 91.8299 2.48959 88.5104C-0.829864 85.1909 -0.829864 79.8091 2.48959 76.4896L33.4792 45.5L2.48959 14.5104C-0.829864 11.191 -0.829864 5.80905 2.48959 2.48959Z"
+                  fill="currentColor" />
+              </svg>
+            </button>
+          </modal-toggle>
           <img data-template-attributes="src,alt">
         </div>
       </header>
@@ -66,10 +75,11 @@
       </form>
     </ingredients-form>
 
-    <ingredients-overview class="ingredients-overview ingredients-overview--empty layout__aside" role="complementary">
+    <ingredients-overview class="ingredients-overview ingredients-overview--invisible layout__aside"
+      role="complementary">
       <h2>My ingredients</h2>
-      <ul class="ingredients-overview__list">
-      </ul>
+      <ul class="ingredients-overview__list"></ul>
+      <div class="ingredients-overview__empty-message">Add ingredients</div>
 
       <template>
         <li class="ingredients-overview__list-item">
@@ -126,8 +136,9 @@
         </li>
       </template>
     </recipes-overview>
-
   </main>
+
+  <canvas id="background-canvas"></canvas>
 
   <script type="module" src="/src/js/main.ts"></script>
 </body>
