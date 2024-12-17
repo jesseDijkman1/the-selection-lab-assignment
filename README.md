@@ -7,7 +7,10 @@
 - Add the API key to the .env file `echo 'API_KEY=<< API KEY HERE >>' > .env`
 - Run the following command to run the project `node ./server && npm --prefix ./client run dev` (or you can open two terminals and run each command separately).
 
-## Features
+---
 
+## Features
+- Lots of custom utility functions 
 - Search recipes using [Spoonacular](https://spoonacular.com/food-api) API.
-- Save recipes in fake account.
+- Simple threejs animation
+- Fully accessible with keyboard (but missing some extra features like focus trap, aria attributes and custom keyboard controls)
